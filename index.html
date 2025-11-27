@@ -4,54 +4,110 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ладос-Мебель | Производственная компания</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 0; line-height: 1.6; }
+        header { background-color: #6D2327; color: white; text-align: center; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        h1, h2 { margin: 0; }
+        main { padding: 20px; max-width: 800px; margin: 0 auto; }
+        .section { margin-bottom: 40px; }
+        
+        /* Стили для формы */
+        .order-form {
+            background-color: #f9f9f9;
+            border: 2px solid #6D2327;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button {
+            background-color: #6D2327;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover { background-color: #8a2e32; }
+    </style>
 </head>
 <body>
 
-    <header style="text-align: center; padding: 20px;">
-        <img src="logo.png" alt="Логотип Ладос-Мебель" width="300">
-        <p>Производственная компания с 1992 года</p>
+    <header>
+        <img src="logo.png" alt="Логотип" width="400" style="margin-bottom: 10px;">
+        <h1 style="color: #000000;">Более 30 лет изготавливаем МЕБЕЛЬ & ФАСАДЫ</h1>
     </header>
 
-    <hr>
-
     <main>
-        <section>
+        <section class="section">
             <h2>О нас</h2>
-            <p>
-                Мы — производственная компания с 30-летней историей. 
-                Мы не перекупаем мебель — изготавливаем её целиком сами, от корпуса до фасада.
-                Наши клиенты — продавцы, производители мебели и дизайнеры интерьеров.
-            </p>
+            <p>Мы производим мебельные фасады и корпусную мебель любой сложности. Собственное производство 5000 м².</p>
         </section>
 
-        <section>
-            <h2>Что мы производим?</h2>
-            <ul>
-                <li>Мебельные фасады (МДФ, Эмаль, Шпон, ПВХ)</li>
-                <li>Кухни и шкафы по индивидуальным размерам</li>
-                <li>Гардеробные и мебель для ванных</li>
-                <li>Фасадные системы и декор</li>
-            </ul>
-        </section>
-
-        <section>
-            <h2>Почему выбирают нас?</h2>
-            <p>
-                <strong>Надежность:</strong> Работаем с 1992 года. <br>
-                <strong>Гибкость:</strong> Нет типовых размеров, делаем строго по проекту. <br>
-                <strong>Масштаб:</strong> 5000 м² производства и 7000 изделий в месяц.
-            </p>
+        <section class="section">
+            <div class="order-form">
+                <h2 style="color: #6D2327; margin-bottom: 15px;">Заказать расчет</h2>
+                <form id="furniture-form">
+                    <div class="form-group">
+                        <label>Ваше имя:</label>
+                        <input type="text" id="name" required placeholder="Иван">
+                    </div>
+                    <div class="form-group">
+                        <label>Телефон:</label>
+                        <input type="tel" id="phone" required placeholder="+7 (999) 000-00-00">
+                    </div>
+                    <div class="form-group">
+                        <label>Пожелания:</label>
+                        <textarea id="message" rows="3" placeholder="Хочу кухню с бордовыми фасадами..."></textarea>
+                    </div>
+                    <button type="submit">Отправить заявку</button>
+                </form>
+            </div>
         </section>
     </main>
 
-    <hr>
+    <script>
+        // ---------------------------------------------------------
+        // 👇 ВСТАВЬ СВОИ КЛЮЧИ НИЖЕ ВНУТРИ КАВЫЧЕК 👇
+        // ---------------------------------------------------------
+        
+        const supabaseUrl = 'https://ggesduzstrphqjdufvrw.supabase.co'
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnZXNkdXpzdHJwaHFqZHVmdnJ3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQxNzA1NDEsImV4cCI6MjA3OTc0NjU0MX0.tpVuKpzlWcMkFC0YmYkq8jXHqEidF7aDoF9gsI0BUpc'
 
-    <footer>
-        <h3>Свяжитесь с нами</h3>
-        <p>Телефон: +7(495) 139-81-82</p>
-        <p>Email: info@lados-m.ru</p>
-        <p>© 2024 Ладос-Мебель. Все права защищены.</p>
-    </footer>
+        // ---------------------------------------------------------
+        
+        // Инициализация Supabase
+        const client = supabase.createClient(supabaseUrl, supabaseKey)
 
+        // Ловим отправку формы
+        const form = document.getElementById('furniture-form')
+        
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault() // ЭТА СТРОЧКА ЗАПРЕЩАЕТ СТРАНИЦЕ ПРЫГАТЬ!
+
+            // Собираем данные из полей
+            const nameValue = document.getElementById('name').value
+            const phoneValue = document.getElementById('phone').value
+            const messageValue = document.getElementById('message').value
+
+            // Отправляем в Supabase
+            const { data, error } = await client
+                .from('requests')
+                .insert([
+                    { name: nameValue, phone: phoneValue, message: messageValue }
+                ])
+
+            if (error) {
+                console.error('Ошибка:', error)
+                alert('Ошибка при отправке: ' + error.message)
+            } else {
+                alert('✅ Спасибо! Ваша заявка успешно отправлена в базу!')
+                form.reset() // Очистить форму
+            }
+        })
+    </script>
 </body>
 </html>
